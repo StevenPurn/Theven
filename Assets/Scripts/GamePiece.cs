@@ -77,7 +77,6 @@ public class GamePiece : MonoBehaviour {
 
     public List<TileLocation> GetPossibleMoves()
     {
-        //currentlySelected = true;
         List <TileLocation> potentialMoves = new List<TileLocation>();
         if(usedDoubleMove == false)
         {
