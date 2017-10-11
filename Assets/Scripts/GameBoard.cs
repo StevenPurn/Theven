@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class GameBoard : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class GameBoard : MonoBehaviour
     public enum GameType { standard, centered, corners };
 
     private GameObject boardObjects;
+    private static GameObject winPanel;
 
     void Start()
     {
@@ -36,6 +38,15 @@ public class GameBoard : MonoBehaviour
 
     public void CreateBoard(GameType gameType)
     {
+        ResetGame();
+        Transform[] t = GetComponentsInChildren<Transform>();
+        foreach (var transform in t)
+        {
+            if (transform.gameObject != gameObject)
+            {
+                Destroy(transform.gameObject);
+            }
+        }
         bool isBlack = true;
         for (int i = 0; i < BoardSize; i++)
         {
@@ -148,11 +159,32 @@ public class GameBoard : MonoBehaviour
     {
         if(blackPieces.Count < 2)
         {
-            Debug.Log("White won");
+            DisplayWinPanel("White");
         }else if(whitePieces.Count < 2)
         {
-            Debug.Log("Black won");
+            DisplayWinPanel("Black");
         }
+    }
+
+    private static void FindWinPanel()
+    {
+        Transform boardCanvas = GameObject.Find("BoardCanvas").transform;
+        if (GameObject.Find("WinPanel") == null)
+        {
+            winPanel = (GameObject)Instantiate(Resources.Load("Prefabs/WinPanel"), boardCanvas);
+        }
+        else
+        {
+            Debug.LogWarning("Couldn't find win panel");
+        }
+        winPanel.SetActive(false);
+    }
+
+    private static void DisplayWinPanel(string winner)
+    {
+        FindWinPanel();
+        winPanel.GetComponentInChildren<TextMeshProUGUI>().text = winner + " Wins!";
+        winPanel.SetActive(true);
     }
 
     private static void CheckForCaptures()
@@ -220,7 +252,7 @@ public class GameBoard : MonoBehaviour
         }
     }
 
-    //Overload accepting TileValeu in lieu of Player color
+    //Overload accepting TileValue in lieu of Player color
     void PlacePiece(TileValue tValue, TileLocation tileLocation)
     {
         Transform parent = BoardTiles[tileLocation.x, tileLocation.y].tileObj.transform;
@@ -241,6 +273,33 @@ public class GameBoard : MonoBehaviour
             BoardTiles[tileLocation.x, tileLocation.y].valueOfTile = TileValue.whitePiece;
             whitePieces.Add(piece);
             piece.SetPieceColor(TileColor.white);
+        }
+    }
+
+    void ResetGame()
+    {
+        for (int i = 0; i < BoardSize; i++)
+        {
+            for (int j = 0; j < BoardSize; j++)
+            {
+                if(BoardTiles[i, j] != null)
+                {
+                    Destroy(BoardTiles[i, j].tileObj);
+                    BoardTiles[i, j] = new Tile();
+                }
+            }
+        }
+
+        for (int i = blackPieces.Count -1; i >= 0; i--)
+        {
+            Destroy(blackPieces[i].pieceObj);
+            blackPieces.RemoveAt(i);
+        }
+
+        for (int i = whitePieces.Count - 1; i >= 0; i--)
+        {
+            Destroy(whitePieces[i].pieceObj);
+            whitePieces.RemoveAt(i);
         }
     }
 }

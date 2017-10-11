@@ -12,7 +12,6 @@ public class MenuController : MonoBehaviour {
         Application.targetFrameRate = 30;
     }
 
-    // Use this for initialization
     void Start () {
         gBoard = FindObjectOfType<GameBoard>();
         gameType = GameBoard.GameType.standard;
