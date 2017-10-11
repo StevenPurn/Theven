@@ -33,7 +33,6 @@ public class GameBoard : MonoBehaviour
             boardObjects = GameObject.Find("BoardObjects");
         }
         CurPlayer = Player.white;
-        //playerUI = GameObject.Find("CurrentPlayerText");
     }
 
     public void CreateBoard(GameType gameType)
@@ -142,10 +141,24 @@ public class GameBoard : MonoBehaviour
         BoardTiles[tileLocation.x, tileLocation.y] = newTile;
     }
 
+    static void SetUIText()
+    {
+        if (playerUI == null && GameObject.Find("CurrentPlayerText") != null)
+        {
+            playerUI = GameObject.Find("CurrentPlayerText");
+        }
+
+        if(playerUI == null)
+        {
+            return;
+        }
+        playerUI.GetComponent<CurrentPlayerUI>().SetUIText();
+    }
+
     public static void ChangePlayer()
     {
         CurPlayer = CurPlayer == Player.white ? Player.black : Player.white;
-        //playerUI.GetComponent<CurrentPlayerUI>().SetUIText();
+        SetUIText();
     }
 
     public static void EndTurn()

@@ -20,7 +20,10 @@ public class MenuController : MonoBehaviour {
     public void GoToScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
-        gBoard.CreateBoard(gameType);
+        if (sceneName == "Board")
+        {
+            gBoard.CreateBoard(gameType);
+        }
     }
 	
     public void SetFirstPlayer(Dropdown dropDown)
